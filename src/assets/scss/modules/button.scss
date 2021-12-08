@@ -9,6 +9,12 @@ button, input {
     display: inline-block;
 }
 
+.form-pos {
+    display: flex;
+    flex-direction: column;
+    //justify-content: space-between;
+}
+
 .btn {
     width: 334px;
     height: 46px;
@@ -20,8 +26,9 @@ button, input {
     color: $white;
     background: transparent;
     outline: 1px solid $white30;
-    margin-left: 1px;
-    padding-top: 3px;
+    //margin-left: 1px;
+    //padding-top: 3px;
+    margin-bottom: 1em;
 
     &__gradient {
         width: 337px;
@@ -34,4 +41,11 @@ button, input {
         box-shadow: 0px 13.2985px 26.5969px rgba(255, 0, 63, 0.2);
         //mix-blend-mode: normal;
     }
+}
+input::placeholder {
+    color: $white20;
+    font-size: 0.7em;
+    text-align: start;
+    padding: 0 11px;
+    text-align: left;
 }
