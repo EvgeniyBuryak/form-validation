@@ -1,0 +1,37 @@
+button, input {
+    padding: 0;
+    //white-space: nowrap;
+    font-family: $mainFont;
+    padding: 0;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn {
+    width: 334px;
+    height: 46px;
+    font-size: 19px;
+    line-height: 22px;
+    letter-spacing: 0.02em;
+    //border: 1px solid red;
+    border-radius: 4px;
+    color: $white;
+    background: transparent;
+    outline: 1px solid $white30;
+    margin-left: 1px;
+    padding-top: 3px;
+
+    &__gradient {
+        width: 337px;
+        height: 48px;
+        border-radius: 5px;
+        color: $ink;
+        background: linear-gradient(91.33deg, #89A3FF 0%, #FF6060 54.17%, #FFBF00 100%);
+        outline: none;
+
+        box-shadow: 0px 13.2985px 26.5969px rgba(255, 0, 63, 0.2);
+        //mix-blend-mode: normal;
+    }
+}

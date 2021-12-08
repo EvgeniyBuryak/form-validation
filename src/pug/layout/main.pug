@@ -1,0 +1,21 @@
+include ../utils/mixins
+block variables
+
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title #{title}
+    meta(name="description", content= description)
+    meta(content="width=device-width, initial-scale=1" name="viewport")
+    block head
+
+  body(class=pageClass)
+    .wrapper
+      #app
+        //- include ../includes/modules/header
+        .content-wrapper
+          block content
+        //- include ../includes/modules/footer
+
+    block script
