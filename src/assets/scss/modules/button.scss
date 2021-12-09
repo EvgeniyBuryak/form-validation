@@ -21,13 +21,12 @@ button, input {
     font-size: 19px;
     line-height: 22px;
     letter-spacing: 0.02em;
-    //border: 1px solid red;
+    
     border-radius: 4px;
     color: $white;
     background: transparent;
     outline: 1px solid $white30;
-    //margin-left: 1px;
-    //padding-top: 3px;
+    
     margin-bottom: 1em;
 
     &__gradient {
