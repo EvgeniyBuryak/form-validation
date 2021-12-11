@@ -2,8 +2,8 @@
 let rePhone = /\(?\d{3}\)?([-\/\.])\d{3}\1\d{4}/;
 // pattern="^[А-Яа-яЁё\s]+$")
 // const RE_NAME = /[\sА-Яа-яЁё]\W+/;
-let reName = new RegExp("^[А-ЯЁ][а-яё\\s]+$");//[^0-9]");
-let reEmail = new RegExp("^[A-Za-z0-9]+@[A-Za-z]+\\.com$");
+let reName = new RegExp("^[А-ЯЁ][а-яё\\s]+$");
+let reEmail = new RegExp("^[A-Za-z0-9]+[A-Za-z0-9-_.]*[A-Za-z0-9]+@[A-Za-z]+\\.([A-Za-z]{2,4})+$");
 // let reEmail = new RegExp("^[a-z]@[a-z]+\\.com$");
 // let reEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.com$/;
 
@@ -41,9 +41,9 @@ const checkValue = (value, inputType, re) => {
 }
 
 function testInfo () {
-    const inputArray = document.querySelectorAll('input');
+    const ARR_INPUT = document.querySelectorAll('input');
 
-    for (let input of inputArray) {
+    for (let input of ARR_INPUT) {
 
         let type = input.getAttribute('type');
         let re = ARR_REGEXP[type];
@@ -55,7 +55,7 @@ function testInfo () {
             //     checkValue(input.value, ARR_TYPE.text, re);
             //     break;
             case "email": 
-                console.log(type);
+                // console.log(type);
                 // console.log(input.value);
                 checkValue(input.value, ARR_TYPE.email, re);
                 break;
