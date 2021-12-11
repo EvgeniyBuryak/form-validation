@@ -1,10 +1,10 @@
 
 let rePhone = /\(?\d{3}\)?([-\/\.])\d{3}\1\d{4}/;
-// pattern="^[А-Яа-яЁё\s]+$")
-// const RE_NAME = /[\sА-Яа-яЁё]\W+/;
 let reName = new RegExp("^[А-ЯЁ][а-яё\\s]+$");
 let reEmail = new RegExp("^[A-Za-z0-9]+[A-Za-z0-9-_.]*[A-Za-z0-9]+@[A-Za-z]+\\.([A-Za-z]{2,4})+$");
-// let reEmail = new RegExp("^[a-z]@[a-z]+\\.com$");
+let rePassword = new RegExp("(?=.*[A-Z])(?=.*[a-z])(?=.*[\\d])(?=.*[\\W])[\\w\\W]{8,}"); // позитивный просмотр вперед
+// let rePassword = new RegExp("[A-Za-z]+(?=.*\\d{1,})?"); // позитивный просмотр вперед
+// let rePassword = new RegExp("^(([A-Za-z0-9]+\\d+))+$");
 // let reEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.com$/;
 
 
@@ -19,14 +19,16 @@ let reEmail = new RegExp("^[A-Za-z0-9]+[A-Za-z0-9-_.]*[A-Za-z0-9]+@[A-Za-z]+\\.(
 const ARR_TYPE = { 
     text: 'Кириллицей',
     email: 'Email',
+    password: 'пароль',
 };
 
 const ARR_REGEXP = { 
     text: reName,
     email: reEmail,
+    password: rePassword,
 };
 
-const checkValue = (value, inputType, re) => {
+const checkValue = (value, titleType, re) => {
     //for (let [type, re] of Object.entries(ARR_REGEXP)) {
         
         //if (type != inputType) continue;
@@ -34,9 +36,9 @@ const checkValue = (value, inputType, re) => {
         const OK = re.exec(value);
 
         if(!OK)
-            alert(RegExp.input + ` должен быть ${inputType}`);
+            alert(RegExp.input + ` - Неверный ${titleType}`);
         else 
-            alert("Thanks, your name is " + OK[0]);
+            alert(`Thanks, your ${titleType} is ${OK[0]}`);
     //}
 }
 
@@ -46,18 +48,25 @@ function testInfo () {
     for (let input of ARR_INPUT) {
 
         let type = input.getAttribute('type');
+        let title = ARR_TYPE[type];
         let re = ARR_REGEXP[type];
         
+        // есть подозрения что будет работать и без switch
         switch(type) {
             // case "text": 
             //     console.log(type);
             //     // console.log(input.value);
             //     checkValue(input.value, ARR_TYPE.text, re);
             //     break;
-            case "email": 
-                // console.log(type);
+            // case "email": 
+            //     // console.log(type);
+            //     // console.log(input.value);
+            //     checkValue(input.value, ARR_TYPE.email, re);
+            //     break;
+            case "password": 
+                //console.log(type);
                 // console.log(input.value);
-                checkValue(input.value, ARR_TYPE.email, re);
+                checkValue(input.value, title, re);
                 break;
             case "reset":                
                 //console.log(RegExp);
@@ -66,6 +75,7 @@ function testInfo () {
                 break;
                 
         }
+        console.log(input.value);
         // if (input.getAttribute('type') == "text") {
         //     // console.log(input.value);
         //     checkValue(input.value);
