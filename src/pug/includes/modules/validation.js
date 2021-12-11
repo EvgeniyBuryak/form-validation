@@ -3,9 +3,9 @@ let rePhone = /\(?\d{3}\)?([-\/\.])\d{3}\1\d{4}/;
 // pattern="^[А-Яа-яЁё\s]+$")
 // const RE_NAME = /[\sА-Яа-яЁё]\W+/;
 let reName = new RegExp("^[А-ЯЁ][а-яё\\s]+$");//[^0-9]");
-// let reEmail = new RegExp("^[A-Za-z0-9]\\@[A-Za-z]+\\.com$");
+let reEmail = new RegExp("^[A-Za-z0-9]+@[A-Za-z]+\\.com$");
 // let reEmail = new RegExp("^[a-z]@[a-z]+\\.com$");
-let reEmail = /^[a-z]+@$/;
+// let reEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.com$/;
 
 
 // function testInfo (phoneInput) {
