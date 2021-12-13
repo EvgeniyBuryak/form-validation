@@ -33,6 +33,12 @@ const checkValue = (value, titleType, re) => {
         
         //if (type != inputType) continue;
 
+        const prevRegExp = RegExp.input;
+
+        if (ARR_TYPE['password'] == titleType) 
+            if (RegExp.input == value)
+                console.log(`Картошка: prev: ${prevRegExp} new: ${RegExp.input}`);
+
         const OK = re.exec(value);
 
         if(!OK)
