@@ -38,7 +38,7 @@ const passConfirm = (value) => {
         console.log(`Пароль: ${RegExp.input} совпадает`);
 }
 
-const checkValue = (value, titleType, re) => {
+const CheckValue = (value, titleType, re) => {
     //if (type != inputType) continue;
 
     if (ARR_TYPE['password'] == titleType) passConfirm(value);
@@ -49,6 +49,28 @@ const checkValue = (value, titleType, re) => {
         alert(RegExp.input + ` - Неверный ${titleType}`);
     else 
         alert(`Thanks, your ${titleType} is ${OK[0]}`);
+}
+
+const IsAdults = (value) => {
+    // Day in milliseconds
+    // let oneDay = 24 * 3600 * 1000;                    
+
+    // Текущая дата
+    const currentDateTimeStamp = Date.now(); // create date in the milliseconds
+    // Дата рождения пользователя
+    const userDateTimeStamp = Date.parse(value); // from string to milliseconds
+    
+    // Дата в читаемом виде 2012-12-12 + time + UTC
+    let currentDate = new Date(currentDateTimeStamp);
+    let userDate = new Date(userDateTimeStamp);
+    
+    const eighteenYearsAgo = currentDate.getFullYear() - 18;
+
+    if (eighteenYearsAgo < userDate.getFullYear()) return false;
+    if (currentDate.getMonth() < userDate.getMonth()) return false;
+    if (currentDate.getDate() < userDate.getDate()) return false;
+
+    return true;
 }
 
 function testInfo () {
@@ -62,55 +84,19 @@ function testInfo () {
         
         // есть подозрения что будет работать и без switch
         switch(type) {
-            // case "text": 
-            // //     console.log(type);
-            // //     // console.log(input.value);
-            //     checkValue(input.value, ARR_TYPE.text, re);
-            //     break;
-            // case "email": 
-            //     // console.log(type);
-            //     // console.log(input.value);
-            //     checkValue(input.value, ARR_TYPE.email, re);
-            //     break;
-            // case "password": 
-            //     //console.log(type);
-            //     // console.log(input.value);
-            //     checkValue(input.value, title, re);
-            //     break;
+            case "text":
+                CheckValue(input.value, title, re);
+                break;
+            case "email": 
+                CheckValue(input.value, title, re);
+                break;
+            case "password":
+                CheckValue(input.value, title, re);
+                break;
             case "date":
+                CheckValue(input.value, title, re);
                 
-                const isAdults = (value) => {
-                    // Day in milliseconds
-                    // let oneDay = 24 * 3600 * 1000;                    
-
-                    // Текущая дата по гринвичу
-                    const currentDateTimeStamp = Date.now(); // create date in the milliseconds UTC+0
-                    // Пользовательская дата по НСК
-                    const userDateTimeStamp = Date.parse(value); // from string to milliseconds UTC+07
-                    
-                    // Дата в читаемом виде 2012-12-12 + time + UTC
-                    let currentDate = new Date(currentDateTimeStamp);
-                    let userDate = new Date(userDateTimeStamp);// - sixHours);
-                    
-                    const eighteenYearsAgo = currentDate.getFullYear() - 18;
-
-                    // let eighteenYearsAgo = new Date(
-                    //     currentDate.getFullYear() - 18, 
-                    //     currentDate.getMonth(), 
-                    //     currentDate.getDate(),
-                    // );
-
-                    if (eighteenYearsAgo < userDate.getFullYear()) return false;
-                    if (currentDate.getMonth() < userDate.getMonth()) return false;
-                    if (currentDate.getDate() < userDate.getDate()) return false;
-
-                    return true;
-                }
-                
-                const res = isAdults(input.value);
-                
-                checkValue(input.value, title, re);
-
+                const IS_ADULT = IsAdults(input.value);
                 break;
             case "reset":                
                 //console.log(RegExp);
@@ -119,23 +105,5 @@ function testInfo () {
                 break;
                 
         }
-        // console.log(input.value);
-        // if (input.getAttribute('type') == "text") {
-        //     // console.log(input.value);
-        //     checkValue(input.value);
-        // }
-        // if (input.getAttribute('type') == "email") {
-        //     // console.log(input.value);
-        //     // checkValue(input.value);
-        // }
-        // if (input.getAttribute('type') == "password") {
-        //     console.log(input.value);
-        // }
-        // if (input.getAttribute('type') == "date") {
-        //     console.log(input.value);
-        // }
-        // if (input.getAttribute('type') == "reset") {
-        //     console.log(RegExp);
-        // }
     }
 }
