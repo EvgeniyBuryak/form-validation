@@ -79,57 +79,38 @@ function testInfo () {
             //     break;
             case "date":
                 
-                const isAdult = (value) => {
-                    let sevenHours = 7 * 3600 * 1000;
-                    let sixHours = 6 * 3600 * 1000;
-                    let oneDay = 24 * 3600 * 1000;
-                    // console.log(oneDay);
+                const isAdults = (value) => {
+                    // Day in milliseconds
+                    // let oneDay = 24 * 3600 * 1000;                    
 
                     // Текущая дата по гринвичу
                     const currentDateTimeStamp = Date.now(); // create date in the milliseconds UTC+0
                     // Пользовательская дата по НСК
                     const userDateTimeStamp = Date.parse(value); // from string to milliseconds UTC+07
                     
-                    // Дата в читаемом виде 2012-12-12 + time
+                    // Дата в читаемом виде 2012-12-12 + time + UTC
                     let currentDate = new Date(currentDateTimeStamp);
                     let userDate = new Date(userDateTimeStamp);// - sixHours);
                     
-                    // const eighteenYearsAgo = currentDate.getFullYear() - 18;
-                    // const user = userDate.getFullYear();
+                    const eighteenYearsAgo = currentDate.getFullYear() - 18;
 
-                    let eighteenYearsAgo = new Date(
-                        currentDate.getFullYear() - 18, 
-                        currentDate.getMonth(), 
-                        currentDate.getDate(),
-                    );
-                    
-                    let userYear = new Date(
-                        userDate.getFullYear(),
-                        userDate.getMonth(), 
-                        userDate.getDate(),
-                        0,                
-                        //'2012-01-26T13:51:50.417-07:00'        
-                    );
+                    // let eighteenYearsAgo = new Date(
+                    //     currentDate.getFullYear() - 18, 
+                    //     currentDate.getMonth(), 
+                    //     currentDate.getDate(),
+                    // );
 
-                    // console.log(Date.parse(newDate.toString()));
-                    console.log(`currentDate: ${currentDate}`);
-                    console.log(`old18Plus: ${eighteenYearsAgo}`);
-                    console.log(`userDate: ${userDate}`);
-                    console.log(`userYear: ${userYear}`);
-    
-                    if (userDateTimeStamp < currentDateTimeStamp) {
-                        console.log('Есть 18 лет!');
-                    }
+                    if (eighteenYearsAgo < userDate.getFullYear()) return false;
+                    if (currentDate.getMonth() < userDate.getMonth()) return false;
+                    if (currentDate.getDate() < userDate.getDate()) return false;
 
-                    const res = currentDate - userDate;// * (24 * 3600 * 1000);
-
-                    console.log(`Из текущей даты вычитаем дату пользователя: ${res}`); //new Date(oneDay)
+                    return true;
                 }
-
-                // console.log(input.value.split("-")[0]);
-                isAdult(input.value);
-
+                
+                const res = isAdults(input.value);
+                
                 checkValue(input.value, title, re);
+
                 break;
             case "reset":                
                 //console.log(RegExp);
