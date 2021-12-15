@@ -105,17 +105,25 @@ const createPromptForUser = (input) => {
     collectionPromptForUser.set(KEY, div);
     // collectionPromptForUser.add(div);
 
+    input.style.outlineColor = 'red';
     input.after(div);
 }
 
 const removePromptForUser = (input) => {
     const KEY = input.dataset.showErrorMessage;
+    // console.log(KEY);
 
-    const div = collectionPromptForUser.get(KEY);
-
-    div.remove();
-
-    collectionPromptForUser.delete(KEY);
+    if (collectionPromptForUser.has(KEY)) {
+        const div = collectionPromptForUser.get(KEY);
+        input.style.outlineColor = 'green';
+        div.remove();
+    }
+    // console.log(div);
+    // div.innerHTML = "123";
+    
+    // alert(KEY);
+    // alert(collectionPromptForUser.get('first-name'));
+    //collectionPromptForUser.delete(KEY);
     // for (let value of collectionPromptForUser) {
     //     value.
     // }
@@ -146,10 +154,9 @@ function validate () {
                 // console.log(isValidate);
                 if (!isValidate) // Выводим подсказку юзеру, о том что требуется исправить
                 {
-                    createPromptForUser(input);
-                    input.style.outlineColor = 'red';
+                    createPromptForUser(input);                    
                 } else {
-                    removePromptForUser(input);
+                    removePromptForUser(input);                    
                 }
                 
                 break;
