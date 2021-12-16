@@ -54,7 +54,7 @@ const checkPasswordAfterSecondInput = (value) => {
 }
 
 
-const checkValueOnRegExp = (value, titleType, re) => {
+const checkValueOnRegExp = (value, re) => {
     
     // if (COLL_TYPE['password'] == titleType) {
     //     checkPasswordAfterSecondInput(value);
@@ -72,19 +72,19 @@ const checkValueOnRegExp = (value, titleType, re) => {
     }
 }
 
-const checkPasswordOnRegExp = (value, titleType, re) => {
+// const checkPasswordOnRegExp = (value) => {
 
-    // if (COLL_TYPE['password'] == titleType) {
-    const IS_PASSWORD_MATCHES = checkPasswordAfterSecondInput(value);
-        // console.log('456');
-        // return IS_PASSWORD_MATCHES;
-        // checkPasswordAfterSecondInput(value);
-    // }
-    // console.log('123');
-    const IS_REG_EXP_RIGHT = checkValueOnRegExp(value, titleType, re);
-    return (IS_PASSWORD_MATCHES) ? true : IS_REG_EXP_RIGHT;
-    // return IS_PASSWORD_MATCHES && IS_REG_EXP_RIGHT; // первая истина
-}
+//     // if (COLL_TYPE['password'] == titleType) {
+//     const IS_PASSWORD_MATCHES = checkPasswordAfterSecondInput(value);
+//         // console.log('456');
+//     return IS_PASSWORD_MATCHES;
+//         // checkPasswordAfterSecondInput(value);
+//     // }
+//     // console.log('123');
+//     // const IS_REG_EXP_RIGHT = checkValueOnRegExp(value, titleType, re);
+//     // return (IS_PASSWORD_MATCHES) ? true : IS_REG_EXP_RIGHT;
+//     // return IS_PASSWORD_MATCHES && IS_REG_EXP_RIGHT; // первая истина
+// }
     
 // Проверка пользователя на совершеннолетие
 const userIsAdults = (value) => {
@@ -164,48 +164,53 @@ function validate () {
     for (let input of ARR_INPUT) {
 
         let type = input.getAttribute('type');
-        // let type = input.dataset.showErrorMessage;
-        let title = COLL_TYPE[type];
+        let typeName = input.dataset.showErrorMessage;
+        // let title = COLL_TYPE[type];
         // let re = COLL_REGEXP[type];
         let re = ARR_MAP_REGEXP.get(type);
         // console.log(ARR_MAP_REGEXP);
 
         // есть подозрения что будет работать и без switch
-        switch(type) {
+        switch(typeName) {
 
-            case "text":
-            case "email":            
-                isValidate = checkValueOnRegExp(input.value, title, re);
-
-                // Выводим подсказку юзеру, о том что требуется исправить
-                if (!isValidate) createPromptForUser(input);
-                else removePromptForUser(input);
+            case "first-name":
+            case "second-name":
+            case "email":
+            case "first-password":
+                isValidate = checkValueOnRegExp(input.value, re);                
                 break;
 
-            case "password":
-                isValidate = checkPasswordOnRegExp(input.value, title, re);
-
-                // Выводим подсказку юзеру, о том что требуется исправить
-                if (!isValidate) createPromptForUser(input);
-                else removePromptForUser(input);
+            case "second-password":
+                isValidate = checkPasswordAfterSecondInput(input.value);
                 break;
 
-            case "date":
-                isValidate = checkValueOnRegExp(input.value, title, re);
+                // // Выводим подсказку юзеру, о том что требуется исправить
+                // if (!isValidate) createPromptForUser(input);
+                // else removePromptForUser(input);
+
+            // case "date":
+            //     isValidate = checkValueOnRegExp(input.value, title, re);
                 
-                const IS_ADULT = userIsAdults(input.value);
-                if (IS_ADULT) console.log('Есть 18 лет!');
-                break;
-            case "reset":                
-                //console.log(RegExp);
-                break;
+            //     const IS_ADULT = userIsAdults(input.value);
+            //     if (IS_ADULT) console.log('Есть 18 лет!');
+            //     break;
+            // case "reset":                
+            //     //console.log(RegExp);
+            //     break;
             default:
                 break;
                 
         }
+
+        // Пропукаем подсказку для кнопки "Отправить"
+        if (type == "submit") continue;
+
+        // Выводим подсказку юзеру, о том что требуется исправить
+        if (!isValidate) createPromptForUser(input);
+        else removePromptForUser(input);
     }
-    console.log(collectionPromptForUser);
-    console.log(isValidate);
+    // console.log(collectionPromptForUser);
+    // console.log(isValidate);
     return false;//isValidate;
     // let form = document.forms.my;
     // console.dir(form);
