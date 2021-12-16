@@ -17,25 +17,26 @@ let reDate = new RegExp("[0-9]{4}-[0-9]{2}-[0-9]{2}");
 //         window.alert("Thanks, your phone number is " + OK[0]);
 // }
 
-const collectionPromptForUser = new Map();
-
-// массив имен инпутов
-const ARR_TYPE = { 
+// коллекция имен инпутов
+const COLL_TYPE = { 
     text: 'Кириллицей',
     email: 'Email',
     password: 'пароль',
     date: 'дата',
 };
 
-// массив регулярных выражений
-const ARR_REGEXP = { 
+// коллекция регулярных выражений
+const COLL_REGEXP = { 
     text: reName,
     email: reEmail,
     password: rePassword,
     date: reDate,
 };
 
-const ERROR_MESSAGE = {
+const ARR_MAP_REGEXP = new Map(Object.entries(COLL_REGEXP));
+
+// Коллекция сообщений об ошибке для конкретного поля ввода в форме
+const COLL_MESSAGE_ABOUT_ERROR = {
     'first-name': "Имя должно начинаться с большой буквы киррилицей!",
     'second-name': "Фамилия должнa начинаться с большой буквы киррилицей!",
     'email': "Неправильный email! Пример: example@domen.ru",
@@ -44,18 +45,23 @@ const ERROR_MESSAGE = {
     'date': "Вам нет 18-ти лет!",                        
 };
 
-const passConfirm = (value) => {
-    if (RegExp.input == value)
-        console.log(`Пароль: ${RegExp.input} совпадает`);
+const checkPasswordAfterSecondInput = (value) => {
+    
+    if (RegExp.input != value) return false;
+
+    console.log(`Пароль: ${RegExp.input} совпадает`);
+    return true;
 }
 
-const CheckValue = (value, titleType, re) => {
-    //if (type != inputType) continue;
 
-    if (ARR_TYPE['password'] == titleType) passConfirm(value);
-
+const checkValueOnRegExp = (value, titleType, re) => {
+    
+    // if (COLL_TYPE['password'] == titleType) {
+    //     checkPasswordAfterSecondInput(value);
+    // }
+    
     const OK = re.exec(value);
-
+    
     if(!OK) {
         // alert(RegExp.input + ` - Неверный ${titleType}`);
         return false;
@@ -66,7 +72,22 @@ const CheckValue = (value, titleType, re) => {
     }
 }
 
-const IsAdults = (value) => {
+const checkPasswordOnRegExp = (value, titleType, re) => {
+
+    // if (COLL_TYPE['password'] == titleType) {
+    const IS_PASSWORD_MATCHES = checkPasswordAfterSecondInput(value);
+        // console.log('456');
+        // return IS_PASSWORD_MATCHES;
+        // checkPasswordAfterSecondInput(value);
+    // }
+    // console.log('123');
+    const IS_REG_EXP_RIGHT = checkValueOnRegExp(value, titleType, re);
+    return (IS_PASSWORD_MATCHES) ? true : IS_REG_EXP_RIGHT;
+    // return IS_PASSWORD_MATCHES && IS_REG_EXP_RIGHT; // первая истина
+}
+    
+// Проверка пользователя на совершеннолетие
+const userIsAdults = (value) => {
     // Day in milliseconds
     // let oneDay = 24 * 3600 * 1000;                    
 
@@ -88,13 +109,16 @@ const IsAdults = (value) => {
     return true;
 }
 
+const collectionPromptForUser = new Map();
+
+// Создание подсказки
 const createPromptForUser = (input) => {
     const KEY = input.dataset.showErrorMessage;
 
-    if (collectionPromptForUser.has(KEY)) return;// alert('already exist');
+    if (collectionPromptForUser.has(KEY)) return;// alert('already exist's');
 
     // получаем строки за массива по типу
-    const str = ERROR_MESSAGE[KEY];
+    const str = COLL_MESSAGE_ABOUT_ERROR[KEY];
     
     const div = document.createElement('div');
     // const textNode = document.createTextNode('Неправильно сука!');                
@@ -105,80 +129,73 @@ const createPromptForUser = (input) => {
     collectionPromptForUser.set(KEY, div);
     // collectionPromptForUser.add(div);
 
-    input.style.outlineColor = 'red';
+    input.style.outlineColor = '#d54c4c';
     input.after(div);
 }
 
+// Удаление подсказки
 const removePromptForUser = (input) => {
     const KEY = input.dataset.showErrorMessage;
     // console.log(KEY);
 
     if (collectionPromptForUser.has(KEY)) {
         const div = collectionPromptForUser.get(KEY);
-        input.style.outlineColor = 'green';
         div.remove();
+        collectionPromptForUser.delete(KEY);
     }
+    input.style.outlineColor = '#56bf58';
     // console.log(div);
     // div.innerHTML = "123";
     
     // alert(KEY);
     // alert(collectionPromptForUser.get('first-name'));
-    //collectionPromptForUser.delete(KEY);
     // for (let value of collectionPromptForUser) {
     //     value.
     // }
 }
 
-
+// Валидация формы
 function validate () {
-    // const FORM = document.querySelector('form');
-    // FORM.addEventListener('submit', ev => {
-    //     ev.preventDefault();
-    // });
 
     const ARR_INPUT = document.querySelectorAll('input');
+
     let isValidate = false;
 
     for (let input of ARR_INPUT) {
 
         let type = input.getAttribute('type');
-        let title = ARR_TYPE[type];
-        let re = ARR_REGEXP[type];                    
+        // let type = input.dataset.showErrorMessage;
+        let title = COLL_TYPE[type];
+        // let re = COLL_REGEXP[type];
+        let re = ARR_MAP_REGEXP.get(type);
+        // console.log(ARR_MAP_REGEXP);
 
         // есть подозрения что будет работать и без switch
         switch(type) {
-            case "text":
-                // input.style.outlineColor = input.dataset.borderChange;
-                
-                isValidate = CheckValue(input.value, title, re);
-                // console.log(isValidate);
-                if (!isValidate) // Выводим подсказку юзеру, о том что требуется исправить
-                {
-                    createPromptForUser(input);                    
-                } else {
-                    removePromptForUser(input);                    
-                }
-                
-                break;
-            // case "email":             
-            //     isValidate = CheckValue(input.value, title, re);
-            //     console.log(isValidate);
-            //     if (!isValidate) // Выводим подсказку юзеру, о том что требуется исправить
-            //     {
-            //         HelpForUser(input);
-            //         input.style.outlineColor = red;
-            //         // console.log("email");
-            //     }
 
-            //     break;
-            // case "password":
-            //     CheckValue(input.value, title, re);
-            //     break;
-            // case "date":
-            //     CheckValue(input.value, title, re);
+            case "text":
+            case "email":            
+                isValidate = checkValueOnRegExp(input.value, title, re);
+
+                // Выводим подсказку юзеру, о том что требуется исправить
+                if (!isValidate) createPromptForUser(input);
+                else removePromptForUser(input);
+                break;
+
+            case "password":
+                isValidate = checkPasswordOnRegExp(input.value, title, re);
+
+                // Выводим подсказку юзеру, о том что требуется исправить
+                if (!isValidate) createPromptForUser(input);
+                else removePromptForUser(input);
+                break;
+
+            case "date":
+                isValidate = checkValueOnRegExp(input.value, title, re);
                 
-            //     const IS_ADULT = IsAdults(input.value);
-            //     break;
+                const IS_ADULT = userIsAdults(input.value);
+                if (IS_ADULT) console.log('Есть 18 лет!');
+                break;
             case "reset":                
                 //console.log(RegExp);
                 break;
