@@ -104,18 +104,17 @@ const userIsAdults = (value) => {
     const currentDateTimeStamp = Date.now(); // create date in the milliseconds
     // Дата рождения пользователя
     const userDateTimeStamp = Date.parse(value); // from string to milliseconds
-    
     // Дата в читаемом виде 2012-12-12 + time + UTC
     let currentDate = new Date(currentDateTimeStamp);
     let userDate = new Date(userDateTimeStamp);
     
     const eighteenYearsAgo = currentDate.getFullYear() - 18;
-
+    
     if (eighteenYearsAgo < userDate.getFullYear()) return false;
     if (currentDate.getMonth() < userDate.getMonth()) return false;
     if (currentDate.getDate() < userDate.getDate()) return false;
 
-    return true;
+    return isNaN(userDateTimeStamp) ? false : true;
 }
 
 const collectionPromptForUser = new Map();
