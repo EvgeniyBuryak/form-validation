@@ -45,6 +45,15 @@ const COLL_MESSAGE_ABOUT_ERROR = {
     'date': "Вам нет 18-ти лет!",                        
 };
 
+const MAP_INPUTS_IS_VALIDATE = new Map([
+    ['first-name', false],
+    ['second-name', false],
+    ['email', false],
+    ['first-password', false],
+    ['second-password', false],
+    ['date', false],
+]);
+
 const checkPasswordAfterSecondInput = (value) => {
     
     if (RegExp.input != value) return false;
@@ -164,40 +173,46 @@ function validate () {
     for (let input of ARR_INPUT) {
 
         let type = input.getAttribute('type');
-        let typeName = input.dataset.showErrorMessage;
+        let KEY = input.dataset.showErrorMessage;
         // let title = COLL_TYPE[type];
         // let re = COLL_REGEXP[type];
         let re = ARR_MAP_REGEXP.get(type);
         // console.log(ARR_MAP_REGEXP);
 
         // есть подозрения что будет работать и без switch
-        switch(typeName) {
+        switch(KEY) {
 
             case "first-name":
             case "second-name":
             case "email":
             case "first-password":
-                isValidate = checkValueOnRegExp(input.value, re);                
+                isValidate = checkValueOnRegExp(input.value, re);
+                if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
                 break;
 
             case "second-password":
                 isValidate = checkPasswordAfterSecondInput(input.value);
+                if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
                 break;
 
                 // // Выводим подсказку юзеру, о том что требуется исправить
                 // if (!isValidate) createPromptForUser(input);
                 // else removePromptForUser(input);
 
-            // case "date":
-            //     isValidate = checkValueOnRegExp(input.value, title, re);
+            case "date":
+                isValidate = checkValueOnRegExp(input.value, re);
                 
-            //     const IS_ADULT = userIsAdults(input.value);
-            //     if (IS_ADULT) console.log('Есть 18 лет!');
-            //     break;
+                const IS_ADULT = userIsAdults(input.value);
+                if (IS_ADULT === true) {
+                    if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+                    console.log('Есть 18 лет!');
+                }
+                break;
             // case "reset":                
             //     //console.log(RegExp);
             //     break;
             default:
+                isValidate = false;
                 break;
                 
         }
@@ -209,8 +224,13 @@ function validate () {
         if (!isValidate) createPromptForUser(input);
         else removePromptForUser(input);
     }
+
+    // Проверка на валидность всех вводных
+    for (let input of MAP_INPUTS_IS_VALIDATE.values()) {
+        isValidate = (input == false) ? false : isValidate;
+    }
     // console.log(collectionPromptForUser);
-    // console.log(isValidate);
+    console.log(isValidate);
     return false;//isValidate;
     // let form = document.forms.my;
     // console.dir(form);
