@@ -26,12 +26,21 @@ const COLL_TYPE = {
 };
 
 // коллекция регулярных выражений
+// const COLL_REGEXP = { 
+//     text: reName,
+//     email: reEmail,
+//     password: rePassword,
+//     date: reDate,
+// };
 const COLL_REGEXP = { 
-    text: reName,
-    email: reEmail,
-    password: rePassword,
-    date: reDate,
+    'first-name': reName,
+    'second-name': reName,
+    'email': reEmail,
+    'first-password': rePassword,
+    'second-password': rePassword,
+    'date': reDate,
 };
+
 
 const ARR_MAP_REGEXP = new Map(Object.entries(COLL_REGEXP));
 
@@ -175,7 +184,7 @@ function validate () {
         let KEY = input.dataset.showErrorMessage;
         // let title = COLL_TYPE[type];
         // let re = COLL_REGEXP[type];
-        let re = ARR_MAP_REGEXP.get(type);
+        let re = ARR_MAP_REGEXP.get(KEY);
         // console.log(ARR_MAP_REGEXP);
 
         // есть подозрения что будет работать и без switch
@@ -186,12 +195,14 @@ function validate () {
             case "email":
             case "first-password":
                 isValidate = checkValueOnRegExp(input.value, re);
-                if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+                // if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+                // else MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
                 break;
 
             case "second-password":
                 isValidate = checkPasswordAfterSecondInput(input.value);
-                if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+                // if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+                // else MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
                 break;
 
                 // // Выводим подсказку юзеру, о том что требуется исправить
@@ -201,35 +212,60 @@ function validate () {
             case "date":
                 isValidate = checkValueOnRegExp(input.value, re);
                 
-                const IS_ADULT = userIsAdults(input.value);
-                if (IS_ADULT === true) {
-                    if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-                    console.log('Есть 18 лет!');
-                }
+                const IS_ADULT = isValidate ? userIsAdults(input.value) : false;
+                
+                isValidate = IS_ADULT ? isValidate : false;
+                
+                // console.log(isValidate);
+                // const IS_ADULT = userIsAdults(input.value);
+                // MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+
+                // if (IS_ADULT === false) continue;
+
+                // if (IS_ADULT === true) 
+                //     isValidate = true;
+                // else
+                //     isValidate = false;
+
+                // if (IS_ADULT === true) {
+                //     // if (isValidate === true) 
+                //     MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+
+                //     removePromptForUser(input);
+                    
+                //     console.log('Есть 18 лет!');
+                // } else
+                //     createPromptForUser(input);
+                //     MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
                 break;
-            // case "reset":                
-            //     //console.log(RegExp);
-            //     break;
+            case "reset":                
+                //console.log(RegExp);
+                break;
             default:
-                isValidate = false;
                 break;
                 
         }
 
-        // Пропукаем подсказку для кнопки "Отправить"
+        // Пропукаем подсказку для кнопки "Отправить" и "Даты"
         if (type == "submit") continue;
+        // if (type == "date") continue;
+
+        // Запоминаем какой input успешно прошел валидацию
+        MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
 
         // Выводим подсказку юзеру, о том что требуется исправить
         if (!isValidate) createPromptForUser(input);
         else removePromptForUser(input);
     }
-
+    console.log(`BEFORE isValidate: ${isValidate}`)
     // Проверка на валидность всех вводных
-    for (let input of MAP_INPUTS_IS_VALIDATE.values()) {
-        isValidate = (input == false) ? false : isValidate;
+    for (let [key, value] of MAP_INPUTS_IS_VALIDATE.entries()) {
+        console.log(`BEFORE key: ${key} value: ${value}`);
+        isValidate = (value === false) ? false : isValidate;
+        console.log(`AFTER  key: ${key} value: ${value}`);
     }
     // console.log(collectionPromptForUser);
-    console.log(isValidate);
+    console.log(`AFTER  isValidate: ${isValidate}`)
     return false;//isValidate;
     // let form = document.forms.my;
     // console.dir(form);
