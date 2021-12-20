@@ -34,12 +34,12 @@ const COLL_MESSAGE_ABOUT_ERROR = {
     'email': "Неправильный email! Пример: example@domen.ru",
     'first-password': "Пароль должен содержать не менее одной цифры, символа и большой буквы!",
     'second-password': "Пароль не совпадает!",
-    'date': "Вам нет 18-ти лет!",                        
+    'date': `Укажите дату рождения!`,
 };
 
 const COLL_MESSAGE_PROMPT = {
-    'length': `Количество символов не должно превышать ${MAX_LENGTH}`,
-    'date': `Укажите дату рождения!`,
+    'length': `Количество символов не должно превышать ${MAX_LENGTH}`,    
+    'date': "Вам нет 18-ти лет!",
 };
 
 const MAP_INPUTS_IS_VALIDATE = new Map([
@@ -164,62 +164,73 @@ const validate = () => {
 
     for (let input of ARR_INPUT) {
 
-        let type = input.getAttribute('type');
-        let KEY = input.dataset.showErrorMessage;
-        let re = MAP_REGEXP_FOR_INPUTS.get(KEY);
-        let length = input.value.length;
+        // let type = input.getAttribute('type');
+        const KEY = input.dataset.showErrorMessage;
+        const RE = MAP_REGEXP_FOR_INPUTS.get(KEY);
+        const LENGTH = input.value.length;
         
         switch(KEY) {
 
             case "first-name":
             case "second-name":
+                isValidate = checkValueOnRegExp(input.value, RE);
+
+                // Выводим подсказку юзеру, о том что требуется исправить
+                if (!isValidate) createPromptForUser(input);
+                else removePromptForUser(input);
+
+                // Проверяем длину имени и фамилии
+                // если больше положенного предупреждаем пользователя
+                if (LENGTH > MAX_LENGTH) {
+                    changePromtForUser(input, COLL_MESSAGE_PROMPT.length);
+                    isValidate = false;
+                }
+
+                break;
             case "email":
             case "first-password":
-                isValidate = checkValueOnRegExp(input.value, re);
+                isValidate = checkValueOnRegExp(input.value, RE);
+
+                // Выводим подсказку юзеру, о том что требуется исправить
+                if (!isValidate) createPromptForUser(input);
+                else removePromptForUser(input);
+
                 break;
 
             case "second-password":
                 isValidate = checkPasswordAfterSecondInput(input.value);
+
+                // Выводим подсказку юзеру, о том что требуется исправить
+                if (!isValidate) createPromptForUser(input);
+                else removePromptForUser(input);
+
                 break;
 
             case "date":
-                isValidate = checkValueOnRegExp(input.value, re);
                 
-                const IS_ADULT = isValidate ? userIsAdults(input.value) : false;
+                isValidate = checkValueOnRegExp(input.value, RE);
                 
-                isValidate = IS_ADULT ? isValidate : false;
-                
-                // Если дата рождения не указана
-                if (!input.value.length) {
+                // Выводим подсказку юзеру, о том что требуется исправить
+                if (!isValidate) createPromptForUser(input);
+                else removePromptForUser(input);
+
+                // Дата не указана только после перезагрузки страницы, поэтому пропускаем итерацию
+                if (!isValidate) continue;
+
+                // Если дата не пуста и прошла первоначальную валидацию
+                // проверяем на возвраст
+                const IS_ADULT = userIsAdults(input.value);                
+                                
+                if (!IS_ADULT) {
                     changePromtForUser(input, COLL_MESSAGE_PROMPT.date);
-                    // Дата не указана только после перезагрузки страницы, поэтому пропускаем итерацию
-                    continue;
+                    
+                    isValidate = false;
                 }
+
                 break;
             default:
                 break;
                 
-        }
-
-        // Пропукаем подсказку для кнопки "Отправить"
-        if (type == "submit") continue;
-        
-        // Выводим подсказку юзеру, о том что требуется исправить
-        if (!isValidate) createPromptForUser(input);
-        else removePromptForUser(input);
-
-        // Запоминаем какой input успешно прошел валидацию
-        MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-
-        // Если поля имени и фамилии не прошли валидацию пропускаем итерацию
-        if (type != "text") continue;
-        if (isValidate != true) continue;
-        
-        // Проверяем длину имени и фамилии
-        // если больше положенного предупреждаем пользователя
-        if (length > MAX_LENGTH) {
-            changePromtForUser(input, COLL_MESSAGE_PROMPT.length);
-            isValidate = false;
         }
 
         // Запоминаем какой input успешно прошел валидацию
@@ -227,9 +238,10 @@ const validate = () => {
     }
     
     // Проверка на валидность всех вводных
-    for (let [key, value] of MAP_INPUTS_IS_VALIDATE.entries()) {
+    for (let value of MAP_INPUTS_IS_VALIDATE.values()) {
         isValidate = (value === false) ? false : isValidate;
     }
 
+    if (isValidate) console.log('Данные формы регистрации успешно отправлены!');
     return isValidate;
 }
