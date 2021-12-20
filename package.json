@@ -1,7 +1,7 @@
 {
-  "name": "templatefsdteam-task2",
+  "name": "from-registration",
   "version": "1.0.0",
-  "description": "выполняю второе задание по практике верстки for templateFSDteam-task2",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --open --config ./build/webpack.dev.conf.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jhonah/templateFSDteam-tast2.git"
+    "url": "git+https://github.com/Jhonah/form-validation.git"
   },
   "author": "Evgeniy Buryak",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Jhonah/templateFSDteam-tast2/issues"
+    "url": "https://github.com/Jhonah/form-validation/issues"
   },
-  "homepage": "https://github.com/Jhonah/templateFSDteam-tast2#readme",
+  "homepage": "https://github.com/Jhonah/form-validation#readme",
   "devDependencies": {
     "autoprefixer": "^10.0.0",
     "babel-core": "^6.26.3",
