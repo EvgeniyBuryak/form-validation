@@ -9,6 +9,8 @@ let reDate = new RegExp("[0-9]{4}-[0-9]{2}-[0-9]{2}");
 // let rePassword = new RegExp("^(([A-Za-z0-9]+\\d+))+$");
 // let reEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.com$/;
 
+const collectionPromptForUser = new Map();
+const MAX_LENGTH = 10;
 
 // function testInfo (phoneInput) {
 //     const OK = rePhone.exec(phoneInput.value);
@@ -53,6 +55,12 @@ const COLL_MESSAGE_ABOUT_ERROR = {
     'first-password': "Пароль должен содержать не менее одной цифры, символа и большой буквы!",
     'second-password': "Пароль не совпадает!",
     'date': "Вам нет 18-ти лет!",                        
+};
+
+const COLL_MESSAGE_PROMPT = {
+    // 'latin': "Должно начинаться с большой буквы киррилицей!",
+    'length': `Количество символов не должно превышать ${MAX_LENGTH}`,
+    'date': `Укажите дату рождения!`,
 };
 
 const MAP_INPUTS_IS_VALIDATE = new Map([
@@ -127,8 +135,6 @@ const userIsAdults = (value) => {
     return isNaN(userDateTimeStamp) ? false : true;
 }
 
-const collectionPromptForUser = new Map();
-
 // Создание подсказки
 const createPromptForUser = (input) => {
     const KEY = input.dataset.showErrorMessage;
@@ -172,9 +178,41 @@ const removePromptForUser = (input) => {
     // }
 }
 
+const changePromtForUser = (input, message) => {
+    let KEY = input.dataset.showErrorMessage;
+
+    // Удаляем старую подсказку
+    // removePromptForUser(input);
+
+    // if (collectionPromptForUser.has(KEY)) return;// alert('already exist's');
+
+    if (collectionPromptForUser.has(KEY)) {
+        const div = collectionPromptForUser.get(KEY);
+        div.innerHTML = message;
+
+        return;
+    }
+    // получаем строки за массива по типу
+    // const str = message;//COLL_MESSAGE_ABOUT_ERROR[KEY];
+    
+    const div = document.createElement('div');
+    // const textNode = document.createTextNode('Неправильно сука!');                
+    div.classList.add('alert');
+    // errorAlert.appendChild(textNode);
+    div.innerHTML = message;
+
+    collectionPromptForUser.set(KEY, div);
+    // collectionPromptForUser.add(div);
+
+    input.style.outlineColor = '#d54c4c';
+    input.after(div);
+    // }
+    // COLL_MESSAGE_ABOUT_ERROR[KEY] = message;
+}
+
 // Валидация формы
 function validate () {
-
+    
     const ARR_INPUT = document.querySelectorAll('input');
 
     let isValidate = false;
@@ -187,12 +225,20 @@ function validate () {
         // let re = COLL_REGEXP[type];
         let re = ARR_MAP_REGEXP.get(KEY);
         // console.log(ARR_MAP_REGEXP);
+        let length = input.value.length;
 
         // есть подозрения что будет работать и без switch
         switch(KEY) {
 
             case "first-name":
             case "second-name":
+                // if (length > MAX_LENGTH) {
+                //     // console.log(`Количество символов: ${input.value.length}`);
+                //     changePromtForUser(input, COLL_MESSAGE_PROMPT.length);
+                //     // console.log(collectionPromptForUser);
+                //     return false;
+                //     // COLL_MESSAGE_ABOUT_ERROR[KEY] = `Количество символов превышает ${MAX_LENGTH}`;// .set(KEY, '1');
+                // }
             case "email":
             case "first-password":
                 isValidate = checkValueOnRegExp(input.value, re);
@@ -217,6 +263,10 @@ function validate () {
                 
                 isValidate = IS_ADULT ? isValidate : false;
                 
+                if (!input.value.length) {
+                    changePromtForUser(input, COLL_MESSAGE_PROMPT.date);
+                }
+
                 // console.log(isValidate);
                 // const IS_ADULT = userIsAdults(input.value);
                 // MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
@@ -251,19 +301,32 @@ function validate () {
         if (type == "submit") continue;
         // if (type == "date") continue;
 
-        // Запоминаем какой input успешно прошел валидацию
-        MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-
+        
         // Выводим подсказку юзеру, о том что требуется исправить
         if (!isValidate) createPromptForUser(input);
         else removePromptForUser(input);
+
+        // Запоминаем какой input успешно прошел валидацию
+        MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
+
+        // Если не прошел валидацию
+        if (isValidate != true) continue;
+        
+        if (type == "text")
+            if (length > MAX_LENGTH) {
+                changePromtForUser(input, COLL_MESSAGE_PROMPT.length);
+                isValidate = false;
+            }
+
+        // Запоминаем какой input успешно прошел валидацию
+        MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
     }
     console.log(`BEFORE isValidate: ${isValidate}`)
     // Проверка на валидность всех вводных
     for (let [key, value] of MAP_INPUTS_IS_VALIDATE.entries()) {
-        console.log(`BEFORE key: ${key} value: ${value}`);
+        // console.log(`BEFORE key: ${key} value: ${value}`);
         isValidate = (value === false) ? false : isValidate;
-        console.log(`AFTER  key: ${key} value: ${value}`);
+        // console.log(`AFTER  key: ${key} value: ${value}`);
     }
     // console.log(collectionPromptForUser);
     console.log(`AFTER  isValidate: ${isValidate}`)
