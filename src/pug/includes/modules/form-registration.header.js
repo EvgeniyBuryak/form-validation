@@ -1,24 +1,12 @@
-
-let rePhone = /\(?\d{3}\)?([-\/\.])\d{3}\1\d{4}/;
-// let reName = new RegExp("^[А-ЯЁ]{1}([а-яё\\s]{1,})+$");
 let reName = new RegExp("^([А-ЯЁ]{1})([а-яё]+)([-\\s]{1})(([А-ЯЁа-яё]{1})([а-яё]+))$|^([А-ЯЁ]{1})([а-яё]+)$");
 let reEmail = new RegExp("^[A-Za-z0-9]+[A-Za-z0-9-_.]*[A-Za-z0-9]+@[A-Za-z]+\\.([A-Za-z]{2,4})+$");
 let rePassword = new RegExp("(?=.*[A-Z])(?=.*[a-z])(?=.*[\\d])(?=.*[\\W])[\\w\\W]{8,}"); // позитивный просмотр вперед
 let reDate = new RegExp("[0-9]{4}-[0-9]{2}-[0-9]{2}");
-// let rePassword = new RegExp("[A-Za-z]+(?=.*\\d{1,})?"); // позитивный просмотр вперед
-// let rePassword = new RegExp("^(([A-Za-z0-9]+\\d+))+$");
-// let reEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.com$/;
 
-const collectionPromptForUser = new Map();
-const MAX_LENGTH = 10;
+const SAVING_PROMPTS_USER = new Map();
 
-// function testInfo (phoneInput) {
-//     const OK = rePhone.exec(phoneInput.value);
-//     if(!OK)
-//         window.alert(RegExp.input + " isn't a phone number with area code!");
-//     else 
-//         window.alert("Thanks, your phone number is " + OK[0]);
-// }
+// Длина 40 символов учитывает разнообразие длины большинста имен на территории всей России
+const MAX_LENGTH = 40; 
 
 // коллекция имен инпутов
 const COLL_TYPE = { 
@@ -28,14 +16,7 @@ const COLL_TYPE = {
     date: 'дата',
 };
 
-// коллекция регулярных выражений
-// const COLL_REGEXP = { 
-//     text: reName,
-//     email: reEmail,
-//     password: rePassword,
-//     date: reDate,
-// };
-const COLL_REGEXP = { 
+const COLL_REGEXP_FOR_INPUTS = { 
     'first-name': reName,
     'second-name': reName,
     'email': reEmail,
@@ -44,8 +25,7 @@ const COLL_REGEXP = {
     'date': reDate,
 };
 
-
-const ARR_MAP_REGEXP = new Map(Object.entries(COLL_REGEXP));
+const MAP_REGEXP_FOR_INPUTS = new Map(Object.entries(COLL_REGEXP_FOR_INPUTS));
 
 // Коллекция сообщений об ошибке для конкретного поля ввода в форме
 const COLL_MESSAGE_ABOUT_ERROR = {
@@ -58,7 +38,6 @@ const COLL_MESSAGE_ABOUT_ERROR = {
 };
 
 const COLL_MESSAGE_PROMPT = {
-    // 'latin': "Должно начинаться с большой буквы киррилицей!",
     'length': `Количество символов не должно превышать ${MAX_LENGTH}`,
     'date': `Укажите дату рождения!`,
 };
@@ -83,36 +62,16 @@ const checkPasswordAfterSecondInput = (value) => {
 
 const checkValueOnRegExp = (value, re) => {
     
-    // if (COLL_TYPE['password'] == titleType) {
-    //     checkPasswordAfterSecondInput(value);
-    // }
+    const GOOD = re.exec(value);
     
-    const OK = re.exec(value);
-    
-    if(!OK) {
-        // alert(RegExp.input + ` - Неверный ${titleType}`);
+    if(!GOOD) {        
         return false;
     }        
     else {
-        // alert(`Thanks, your ${titleType} is ${OK[0]}`);
         return true;
     }
 }
 
-// const checkPasswordOnRegExp = (value) => {
-
-//     // if (COLL_TYPE['password'] == titleType) {
-//     const IS_PASSWORD_MATCHES = checkPasswordAfterSecondInput(value);
-//         // console.log('456');
-//     return IS_PASSWORD_MATCHES;
-//         // checkPasswordAfterSecondInput(value);
-//     // }
-//     // console.log('123');
-//     // const IS_REG_EXP_RIGHT = checkValueOnRegExp(value, titleType, re);
-//     // return (IS_PASSWORD_MATCHES) ? true : IS_REG_EXP_RIGHT;
-//     // return IS_PASSWORD_MATCHES && IS_REG_EXP_RIGHT; // первая истина
-// }
-    
 // Проверка пользователя на совершеннолетие
 const userIsAdults = (value) => {
     // Day in milliseconds
@@ -137,21 +96,21 @@ const userIsAdults = (value) => {
 
 // Создание подсказки
 const createPromptForUser = (input) => {
+
     const KEY = input.dataset.showErrorMessage;
 
-    if (collectionPromptForUser.has(KEY)) return;// alert('already exist's');
+    if (SAVING_PROMPTS_USER.has(KEY)) return;// alert('already exists');
 
     // получаем строки за массива по типу
     const str = COLL_MESSAGE_ABOUT_ERROR[KEY];
     
     const div = document.createElement('div');
-    // const textNode = document.createTextNode('Неправильно сука!');                
+    
     div.classList.add('alert');
-    // errorAlert.appendChild(textNode);
+    
     div.innerHTML = str;
 
-    collectionPromptForUser.set(KEY, div);
-    // collectionPromptForUser.add(div);
+    SAVING_PROMPTS_USER.set(KEY, div);
 
     input.style.outlineColor = '#d54c4c';
     input.after(div);
@@ -159,59 +118,45 @@ const createPromptForUser = (input) => {
 
 // Удаление подсказки
 const removePromptForUser = (input) => {
-    const KEY = input.dataset.showErrorMessage;
-    // console.log(KEY);
 
-    if (collectionPromptForUser.has(KEY)) {
-        const div = collectionPromptForUser.get(KEY);
+    const KEY = input.dataset.showErrorMessage;    
+
+    if (SAVING_PROMPTS_USER.has(KEY)) {
+
+        const div = SAVING_PROMPTS_USER.get(KEY);
+        
         div.remove();
-        collectionPromptForUser.delete(KEY);
+
+        SAVING_PROMPTS_USER.delete(KEY);
     }
+
     input.style.outlineColor = '#56bf58';
-    // console.log(div);
-    // div.innerHTML = "123";
-    
-    // alert(KEY);
-    // alert(collectionPromptForUser.get('first-name'));
-    // for (let value of collectionPromptForUser) {
-    //     value.
-    // }
 }
 
 const changePromtForUser = (input, message) => {
+
     let KEY = input.dataset.showErrorMessage;
 
-    // Удаляем старую подсказку
-    // removePromptForUser(input);
-
-    // if (collectionPromptForUser.has(KEY)) return;// alert('already exist's');
-
-    if (collectionPromptForUser.has(KEY)) {
-        const div = collectionPromptForUser.get(KEY);
+    if (SAVING_PROMPTS_USER.has(KEY)) {
+        const div = SAVING_PROMPTS_USER.get(KEY);
         div.innerHTML = message;
 
         return;
-    }
-    // получаем строки за массива по типу
-    // const str = message;//COLL_MESSAGE_ABOUT_ERROR[KEY];
+    }    
     
     const div = document.createElement('div');
-    // const textNode = document.createTextNode('Неправильно сука!');                
+    
     div.classList.add('alert');
-    // errorAlert.appendChild(textNode);
     div.innerHTML = message;
 
-    collectionPromptForUser.set(KEY, div);
-    // collectionPromptForUser.add(div);
-
+    SAVING_PROMPTS_USER.set(KEY, div);
+    
     input.style.outlineColor = '#d54c4c';
-    input.after(div);
-    // }
-    // COLL_MESSAGE_ABOUT_ERROR[KEY] = message;
+    input.after(div);    
 }
 
 // Валидация формы
-function validate () {
+const validate = () => {
     
     const ARR_INPUT = document.querySelectorAll('input');
 
@@ -221,40 +166,21 @@ function validate () {
 
         let type = input.getAttribute('type');
         let KEY = input.dataset.showErrorMessage;
-        // let title = COLL_TYPE[type];
-        // let re = COLL_REGEXP[type];
-        let re = ARR_MAP_REGEXP.get(KEY);
-        // console.log(ARR_MAP_REGEXP);
+        let re = MAP_REGEXP_FOR_INPUTS.get(KEY);
         let length = input.value.length;
-
-        // есть подозрения что будет работать и без switch
+        
         switch(KEY) {
 
             case "first-name":
             case "second-name":
-                // if (length > MAX_LENGTH) {
-                //     // console.log(`Количество символов: ${input.value.length}`);
-                //     changePromtForUser(input, COLL_MESSAGE_PROMPT.length);
-                //     // console.log(collectionPromptForUser);
-                //     return false;
-                //     // COLL_MESSAGE_ABOUT_ERROR[KEY] = `Количество символов превышает ${MAX_LENGTH}`;// .set(KEY, '1');
-                // }
             case "email":
             case "first-password":
                 isValidate = checkValueOnRegExp(input.value, re);
-                // if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-                // else MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
                 break;
 
             case "second-password":
                 isValidate = checkPasswordAfterSecondInput(input.value);
-                // if (isValidate === true) MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-                // else MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
                 break;
-
-                // // Выводим подсказку юзеру, о том что требуется исправить
-                // if (!isValidate) createPromptForUser(input);
-                // else removePromptForUser(input);
 
             case "date":
                 isValidate = checkValueOnRegExp(input.value, re);
@@ -263,44 +189,20 @@ function validate () {
                 
                 isValidate = IS_ADULT ? isValidate : false;
                 
+                // Если дата рождения не указана
                 if (!input.value.length) {
                     changePromtForUser(input, COLL_MESSAGE_PROMPT.date);
+                    // Дата не указана только после перезагрузки страницы, поэтому пропускаем итерацию
+                    continue;
                 }
-
-                // console.log(isValidate);
-                // const IS_ADULT = userIsAdults(input.value);
-                // MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-
-                // if (IS_ADULT === false) continue;
-
-                // if (IS_ADULT === true) 
-                //     isValidate = true;
-                // else
-                //     isValidate = false;
-
-                // if (IS_ADULT === true) {
-                //     // if (isValidate === true) 
-                //     MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-
-                //     removePromptForUser(input);
-                    
-                //     console.log('Есть 18 лет!');
-                // } else
-                //     createPromptForUser(input);
-                //     MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
-                break;
-            case "reset":                
-                //console.log(RegExp);
                 break;
             default:
                 break;
                 
         }
 
-        // Пропукаем подсказку для кнопки "Отправить" и "Даты"
+        // Пропукаем подсказку для кнопки "Отправить"
         if (type == "submit") continue;
-        // if (type == "date") continue;
-
         
         // Выводим подсказку юзеру, о том что требуется исправить
         if (!isValidate) createPromptForUser(input);
@@ -309,28 +211,25 @@ function validate () {
         // Запоминаем какой input успешно прошел валидацию
         MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
 
-        // Если не прошел валидацию
+        // Если поля имени и фамилии не прошли валидацию пропускаем итерацию
+        if (type != "text") continue;
         if (isValidate != true) continue;
         
-        if (type == "text")
-            if (length > MAX_LENGTH) {
-                changePromtForUser(input, COLL_MESSAGE_PROMPT.length);
-                isValidate = false;
-            }
+        // Проверяем длину имени и фамилии
+        // если больше положенного предупреждаем пользователя
+        if (length > MAX_LENGTH) {
+            changePromtForUser(input, COLL_MESSAGE_PROMPT.length);
+            isValidate = false;
+        }
 
         // Запоминаем какой input успешно прошел валидацию
         MAP_INPUTS_IS_VALIDATE.set(KEY, isValidate);
     }
-    console.log(`BEFORE isValidate: ${isValidate}`)
+    
     // Проверка на валидность всех вводных
     for (let [key, value] of MAP_INPUTS_IS_VALIDATE.entries()) {
-        // console.log(`BEFORE key: ${key} value: ${value}`);
         isValidate = (value === false) ? false : isValidate;
-        // console.log(`AFTER  key: ${key} value: ${value}`);
     }
-    // console.log(collectionPromptForUser);
-    console.log(`AFTER  isValidate: ${isValidate}`)
-    return false;//isValidate;
-    // let form = document.forms.my;
-    // console.dir(form);
+
+    return isValidate;
 }
