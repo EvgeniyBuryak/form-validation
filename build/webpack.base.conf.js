@@ -44,13 +44,18 @@ module.exports = {
                 use: {
                     loader: "babel-loader"
                 }
-            }, {
-                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[name].[ext]',
-                    outputPath: 'fonts/'
-                }
+            // }, {
+            //     test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+            //     use: [
+            //         {
+            //             loader: 'url-loader',
+            //             options: {
+            //                 limit: 8192,
+            //                 // name: '[name].[ext]',
+            //                 // outputPath: 'fonts/'
+            //             }
+            //         }
+            //     ],
             }, {
                 test: /\.(png|jpg|gif|svg)$/,
                 loader: 'file-loader',
@@ -109,13 +114,13 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: `${PATHS.assets}css/[name].[hash].css`,
         }),
-        new CopyWebpackPlugin({
-            patterns: [
-                { from: `${PATHS.src}/${PATHS.assets}img`, to: `${PATHS.assets}img` },
-                { from: `${PATHS.src}/${PATHS.assets}fonts`, to: `${PATHS.assets}fonts` },
-                //{ from: `${PATHS.src}/static`, to: '' },
-            ],
-        }),
+        // new CopyWebpackPlugin({
+        //     patterns: [
+        //         { from: `${PATHS.src}/${PATHS.assets}img`, to: `${PATHS.assets}img` },
+        //         { from: `${PATHS.src}/${PATHS.assets}fonts`, to: `${PATHS.assets}fonts` },
+        //         //{ from: `${PATHS.src}/static`, to: '' },
+        //     ],
+        // }),
         ...PAGES.map(page =>
             new HtmlWebpackPlugin({
             hash: true,
